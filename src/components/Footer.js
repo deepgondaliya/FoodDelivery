@@ -9,7 +9,7 @@ export default function Footer() {
             <a href="/" className="mb-3 me-2 mb-md-0 text-muted text-decoration-none lh-1">
               {/* Add logo or branding image here if needed */}
             </a>
-            <span className="text-muted">© 2022 <i>GoFood</i>, Inc</span>
+            <span className="text-muted">© 2024 <i>GoFood</i>, Inc</span>
           </div>
 
           <ul className="nav col-md-4 justify-content-end list-unstyled d-flex">

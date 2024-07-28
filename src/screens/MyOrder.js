@@ -3,7 +3,7 @@ import Footer from '../components/Footer';
 import Navbar from '../components/Navbar';
 
 export default function MyOrder() {
-    const [orderData, setOrderData] = useState(null);
+    const [orderData, setOrderData] = useState([]);
 
     const fetchMyOrder = async () => {
         try {
@@ -17,8 +17,9 @@ export default function MyOrder() {
             });
 
             const data = await response.json();
+            console.log("Data received from backend:", data);
             if (response.ok) {
-                setOrderData(data.orderData);
+                setOrderData(data.orderData.order_data || []);
             } else {
                 console.error("Failed to fetch orders", data.error);
             }
@@ -35,41 +36,45 @@ export default function MyOrder() {
         <div>
             <Navbar />
             <div className='container'>
-                <div className='row'>
-                    {orderData && orderData.order_data && orderData.order_data.length > 0 ? (
-                        orderData.order_data.slice(0).reverse().map((order, index) => (
-                            <div key={index}>
-                                {order.Order_date ? (
-                                    <div className='m-auto mt-5'>
-                                        <h4>{order.Order_date}</h4>
-                                        <hr />
-                                    </div>
-                                ) : (
-                                    order.items.map((item, subIndex) => (
-                                        <div key={`${index}-${subIndex}`} className='col-12 col-md-6 col-lg-3'>
-                                            <div className="card mt-3" style={{ width: "16rem", maxHeight: "360px" }}>
-                                                <img src={item.img} className="card-img-top" alt={item.name} style={{ height: "120px", objectFit: "fill" }} />
-                                                <div className="card-body">
-                                                    <h5 className="card-title">{item.name}</h5>
-                                                    <div className='container w-100 p-0' style={{ height: "38px" }}>
-                                                        <span className='m-1'>{item.qty}</span>
-                                                        <span className='m-1'>{item.size}</span>
-                                                        <span className='m-1'>{order.Order_date}</span>
-                                                        <div className='d-inline ms-2 h-100 w-20 fs-5'>
-                                                            ₹{item.price}/-
+                {orderData.length > 0 ? (
+                    orderData.map((orderGroup, index) => (
+                        <div key={index} className='w-100'>
+                            {orderGroup[0]?.Order_date && (
+                                <div className='m-auto mt-5'>
+                                    <h4>{orderGroup[0].Order_date}</h4>
+                                    <hr />
+                                </div>
+                            )}
+                            <div className="d-flex flex-wrap">
+                                {orderGroup.slice(1).map((item, subIndex) => (
+                                    <div key={`${index}-${subIndex}`} className='p-2'>
+                                        <div className="card" style={{ width: "16rem", maxHeight: "360px" }}>
+                                            <img src={item.img} className="card-img-top" alt={item.name} style={{ height: "200px", objectFit: "fill" }} />
+                                            <div className="card-body">
+                                                <h5 className="card-title">{item.name}</h5>
+                                                <div className='container p-0'>
+                                                    <div className='row'>
+                                                        <div className='col'>
+                                                            <span>Qty: {item.qty}</span>
+                                                        </div>
+                                                        <div className='col'>
+                                                            <span>Size: {item.size}</span>
+                                                        </div>
+                                                        <div className='col'>
+                                                            <span>Price: ₹{item.price}/-</span>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    ))
-                                )}
+                                    </div>
+                                ))}
                             </div>
-                        ))
-                    ) : (
-                        <div>No Orders Found</div>
-                    )}
-                </div>
+                        </div>
+                    ))
+                ) : (
+                    <div className='text-center'>No Orders Found</div>
+                )}
             </div>
             <Footer />
         </div>
